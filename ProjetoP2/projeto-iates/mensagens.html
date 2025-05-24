@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxo - Mensagens Recebidas</title>
+    <link rel="shortcut icon" href="images/barco2.png" type="image/x-icon">
+    <link rel="stylesheet" href="css/default.css">
+    <script src="js/jquery-3.6.4.min.js"></script>
+    <script src="js/api.js"></script>
+    <style>
+        .mensagens-container {
+            margin: 20px auto;
+            max-width: 1000px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .logout-btn {
+            margin-top: 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background-color: #d32f2f;
+        }
+        .refresh-btn {
+            margin-right: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .refresh-btn:hover {
+            background-color: #388E3C;
+        }
+        .action-buttons {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div id="title">
+                <img src="images/barco1.png" alt="ícone de barco">
+                <div class="headtitle">
+                    <h1>Luxo</h1>
+                    <h2>Mensagens Recebidas</h2>
+                </div>
+            </div>
+            <nav>
+                <ul class="navmenu">
+                    <li><a href="index.html">Página inicial</a></li>
+                    <li><a href="admin.html">Administração</a></li>
+                    <li><a href="#" onclick="fazerLogout()" class="accent">Sair</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="pagtitle">
+                <div class="bgtitle"></div>
+                <h2>Mensagens dos Clientes</h2>
+            </div>
+
+            <div class="mensagens-container">
+                <div class="action-buttons">
+                    <button class="refresh-btn" onclick="carregarMensagens()">Atualizar Mensagens</button>
+                </div>
+                
+                <table id="tabelaMensagens">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Mensagem</th>
+                            <th>Data</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>© 2023 por Luxo aluguel de iates</p>
+    </footer>
+
+    <script>
+        $(document).ready(function() {
+            carregarMensagens();
+        });
+
+        function carregarMensagens() {
+            $('#tabelaMensagens tbody').html('<tr><td colspan="4" style="text-align: center;">Carregando mensagens...</td></tr>');
+            
+            obterMensagens()
+                .done(function(mensagens) {
+                    const tbody = $('#tabelaMensagens tbody');
+                    tbody.empty();
+                    
+                    if (mensagens.length === 0) {
+                        tbody.append('<tr><td colspan="4" style="text-align: center;">Nenhuma mensagem encontrada</td></tr>');
+                        return;
+                    }
+                    
+                    mensagens.forEach(function(msg) {
+                        const dataFormatada = msg.data ? new Date(msg.data).toLocaleString('pt-BR') : '---';
+                        
+                        const row = $('<tr>');
+                        row.append($('<td>').text(msg.nome || '---'));
+                        row.append($('<td>').text(msg.email || '---'));
+                        row.append($('<td>').text(msg.mensagem || '---'));
+                        row.append($('<td>').text(dataFormatada));
+                        tbody.append(row);
+                    });
+                })
+                .fail(function() {
+                    $('#tabelaMensagens tbody').html('<tr><td colspan="4" style="text-align: center; color: red;">Erro ao carregar mensagens. Tente novamente.</td></tr>');
+                });
+        }
+
+        function fazerLogout() {
+            window.location.href = 'admin.html';
+        }
+    </script>
+</body>
+</html>

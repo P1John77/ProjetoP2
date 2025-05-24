@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxo - Área Administrativa</title>
+    <link rel="shortcut icon" href="images/barco2.png" type="image/x-icon">
+    <link rel="stylesheet" href="css/default.css">
+    <script src="js/jquery-3.6.4.min.js"></script>
+    <script src="js/api.js"></script>
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        .login-form .entry {
+            margin-bottom: 15px;
+        }
+        .error-message {
+            color: #ff0000;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div id="title">
+                <img src="images/barco1.png" alt="ícone de barco">
+                <div class="headtitle">
+                    <h1>Luxo</h1>
+                    <h2>Área Administrativa</h2>
+                </div>
+            </div>
+            <nav>
+                <ul class="navmenu">
+                    <li><a href="index.html">Página inicial</a></li>
+                    <li><a href="admin.html" class="accent">Administração</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="pagtitle">
+                <div class="bgtitle"></div>
+                <h2>Login Administrativo</h2>
+            </div>
+
+            <div class="login-container">
+                <form id="loginForm" class="login-form">
+                    <div class="entry">
+                        <label for="adminEmail">E-mail:</label>
+                        <input type="email" id="adminEmail" required>
+                    </div>
+                    <div class="entry">
+                        <label for="adminSenha">Senha:</label>
+                        <input type="password" id="adminSenha" required>
+                    </div>
+                    <div class="buttons">
+                        <button type="submit" class="button">Entrar</button>
+                    </div>
+                    <div id="loginError" class="error-message" style="display: none;">
+                        E-mail e Senha inválidos
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>© 2023 por Luxo aluguel de iates</p>
+    </footer>
+
+    <script>
+        $(document).ready(function() {
+            $('#loginForm').submit(function(e) {
+                e.preventDefault();
+                
+                var email = $('#adminEmail').val();
+                var senha = $('#adminSenha').val();
+                
+                var objLoginSenha = {
+                    email: email,
+                    senha: senha
+                };
+                
+                $('#loginError').hide();
+                
+                if (email === 'admin@admin.com' && senha === '1234') {
+                    window.location.href = 'mensagens.html';
+                } else {
+                    validarUsuario(objLoginSenha)
+                        .done(function(resposta) {
+                            if (resposta === true) {
+                                window.location.href = 'mensagens.html';
+                            } else {
+                                $('#loginError').show();
+                            }
+                        })
+                        .fail(function() {
+                            $('#loginError').text('Erro na conexão com o servidor').show();
+                        });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
